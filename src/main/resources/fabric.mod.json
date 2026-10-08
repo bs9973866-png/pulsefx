@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "pulsefx",
+  "version": "${version}",
+  "name": "PulseFX Visuals",
+  "description": "Client-side cosmetic visuals: settings menu, pulsing HUD, keystrokes, hit effects, trail, custom sky.",
+  "authors": ["You"],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": { "client": ["dev.pulsefx.PulseFxClient"] },
+  "mixins": [ { "config": "pulsefx.mixins.json", "environment": "client" } ],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21.4",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
