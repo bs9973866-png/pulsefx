@@ -24,6 +24,14 @@ jobs:
           mkdir -p /tmp/nebula
           tar -xJf /tmp/nebula-src.tar.xz -C /tmp/nebula
           test -f /tmp/nebula/nebula_client/build.gradle
+      - name: Fix HUD number formatters
+        shell: bash
+        run: |
+          sed -i -E 's/%([0-9.]+)F/%\1f/g' /tmp/nebula/nebula_client/src/main/java/com/nebula/client/ui/HudRenderer.java
+          if grep -nE '%[0-9.]+F' /tmp/nebula/nebula_client/src/main/java/com/nebula/client/ui/HudRenderer.java; then
+            echo "Unsupported uppercase F formatter remains" >&2
+            exit 1
+          fi
       - name: Compile mod
         run: gradle --no-daemon build
         working-directory: /tmp/nebula/nebula_client
