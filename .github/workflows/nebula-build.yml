@@ -1,0 +1,35 @@
+name: Build NEBULA Client
+on:
+  push:
+    branches: [nebula-build]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.14'
+      - name: Reassemble source
+        shell: bash
+        run: |
+          cat .nebula-source/part00.b64 .nebula-source/part01a.b64 .nebula-source/part01b.b64 .nebula-source/part02.b64 .nebula-source/part03.b64 .nebula-source/part04.b64 .nebula-source/part05a.b64 .nebula-source/part05b.b64 | base64 --decode > /tmp/nebula-src.tar.xz
+          mkdir -p /tmp/nebula
+          tar -xJf /tmp/nebula-src.tar.xz -C /tmp/nebula
+          test -f /tmp/nebula/nebula_client/build.gradle
+      - name: Compile mod
+        run: gradle --no-daemon build
+        working-directory: /tmp/nebula/nebula_client
+      - name: Upload JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: nebula-client-1.21.1
+          path: /tmp/nebula/nebula_client/build/libs/nebula-client-0.1.0.jar
+          if-no-files-found: error
